@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+cd
+
+yes | sudo yum update
+yes | sudo yum install git zsh gcc gcc-c++
+sudo chsh -s /bin/zsh ec2-user
+
+git clone https://github.com/dseuss/.dotfiles --recursive --depth 1 --branch server
+.dotfiles/make.sh
+vim -c "PlugInstall | qa"
+
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+bash ~/miniconda.sh -b -p $HOME/miniconda
+echo "PATH=$PATH:$HOME/miniconda/bin" >> "$HOME/.bashrc"
+echo "PATH=$PATH:$HOME/miniconda/bin" >> "$HOME/.zshrc"
+source "$HOME/.bashrc"
+
+conda install numpy scipy matplotlib theano pytest ipython-notebook ptpython ipyparallel
